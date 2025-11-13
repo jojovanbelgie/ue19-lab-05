@@ -12,5 +12,5 @@ Cette application interroge l’API publique **JokeAPI** pour afficher une blagu
 
 ### Cloner le dépôt
 ```bash
-git clone https://github.com/jojovanbelgie/ue19-lab-05/tree/main
+git clone https://github.com/jojovanbelgie/ue19-lab-05.git
 cd ue19-lab-05
