@@ -1,4 +1,4 @@
-name: Build and Publish Docker Image
+name: Build, Scan and Publish Docker Image
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-and-push:
+  build-scan-push:
     runs-on: ubuntu-latest
 
     permissions:
@@ -24,7 +24,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push image to GHCR
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        id: build-image
+        with:
+          context: .
+          load: true        # Important pour que Trivy puisse scanner l'image localement
+          tags: ghcr.io/${{ github.repository_owner }}/ue19-lab-05:latest
+
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ghcr.io/${{ github.repository_owner }}/ue19-lab-05:latest
+          format: table
+          exit-code: 1     # mettra l’action en échec si des vulnérabilités critiques sont trouvées
+
+      - name: Push Docker image to GHCR
         uses: docker/build-push-action@v5
         with:
           context: .
